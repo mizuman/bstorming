@@ -1,0 +1,93 @@
+#header {
+  z-index: 4;
+  display: block;
+  right: 5px;
+}
+
+
+.node {
+  cursor: pointer;
+}
+
+.overlay{
+  background-color:#EEE;
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font-size:10px; 
+  font-family:sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+.templink {
+  fill: none;
+  stroke: red;
+  stroke-width: 3px;
+}
+
+.ghostCircle.show{
+  display:block;
+}
+
+.ghostCircle, .activeDrag .ghostCircle{
+  display: none;
+}
+
+.right-menu {
+  font-size: 16px;
+}
+
+.sb-right {
+  background-color: rgba(189, 187, 204, 0.48);
+  color: white;
+  height: 100%;
+}
+
+
+.nodeInfo {
+  height: 18%;
+  margin: 5%;
+}
+
+.workplace {
+  bottom: 0px;
+  width: 90%;
+  height: 80%;
+  margin: 5%;
+  position: absolute;
+}
+
+.workplace-list {
+  position: absolute;
+  max-height: 85%;
+  overflow: scroll;
+  bottom: 20px;
+  width: 100%;
+
+}
+
+.workplace-input {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  height: 20px;
+}
+
+.ideaCards {
+  color: black;
+}
+
+input {
+  width: 70%;
+}
