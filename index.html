@@ -1,30 +1,46 @@
+<!DOCTYPE html>
+
 <html>
-  <head>
-    <style>
-      body {
-        font-family: "Helvetica Neue", helvetica, arial;
-        padding: 15px;
-      }
+<head>
+  <meta charset=utf-8>
+  <meta name=description content="brainstorming tool">
+  <meta name=viewport content="width=device-width, initial-scale=1">
+  <title>BrainStorming Online</title>
 
-      ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/slidebars.min.css">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
 
-      ul li {
-        line-height: 1.4;
-      }
-    </style>
+</head>
+<body>
+  <header id="header" class="sb-slide">
+    <p class="sb-toggle-right right-menu">menu</p>
+  </header><!-- /header -->
+
+  <div id="tree-container"></div>
 
 
-    <script src="lib/socket.io.js"></script>
-    <script src="lib/jquery-1.11.3.min.js"></script>
+  <div class="sb-slidebar sb-right sb-style-overlay">
+    <p class="sb-toggle-right right-menu">close</p>
+    <div class="nodeInfo">
+      <p class="nodeName"></p>
+    </div>
+    <div class="workplace">
+      <div class="list-group workplace-list">
+        
+      </div>
+      <div class="workplace-input">
+        <input class="form-control" placeholder="create your card"/>
+      </div>
+    </div>
+  </div>
 
-    <script src="js/client.js"></script>
-  </head>
-  <body>
-    <h1>Pings</h1>
-    <ul id='pings'></ul>
-  </body>
+  <script src="lib/socket.io.js"></script>
+  <script src="lib/jquery-1.11.3.min.js"></script>
+  <script src="lib/d3/d3.min.js"></script>
+  <script src="lib/bootstrap.min.js"></script>
+  <script src="lib/slidebars.min.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/client.js"></script>
+</body>
 </html>
