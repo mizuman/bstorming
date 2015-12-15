@@ -15,8 +15,6 @@ console.log("http server listening on %d", port);
 
 var chat = io.sockets.on("connection", function(client){
 
-	io.on("same room").emit("some event");
-
 	client.emit("system", {name:"system", msg:"connected"});
 
 	client.on("msg", function(data){
