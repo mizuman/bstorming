@@ -14,11 +14,14 @@ server.listen(port);
 console.log("http server listening on %d", port);
 
 var chat = io.sockets.on("connection", function(client){
-	console.log("connected");
 
-	client.emit("news", {msg:"hello world"});
+	client.emit("system", {name:"system", msg:"connected"});
 
 	client.on("msg", function(data){
+		console.log(data);
+	});
+
+	client.on("init", function(data){
 		console.log(data);
 	});
 

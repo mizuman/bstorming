@@ -18,7 +18,7 @@ function chat(room, name){
 		}
 	});
 
-	socket.on("news", function(data){
+	socket.on("system", function(data){
 		console.log(data);
 	})
 }
