@@ -26,7 +26,7 @@ var chat = io.sockets.on("connection", function(client){
 	});
 
 	client.on("comment", function(data){
-		chat.to(room).emit("comment", data);
+		chat.to(data.room).emit("comment", data);
 	});
 
 	client.on("disconnect", function(){
