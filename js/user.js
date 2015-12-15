@@ -1,3 +1,5 @@
+function User(){};
+
 $(document).ready(function(){
 	var APP_ID = "8DIsPS88JKgLxPJhh9zyt9TC5C03bMDs5il6r8fi";
 	var JS_KEY = "RfsESAxLLE2ePcTfgydba0M8OrCyOqJpAGaYx9Ih";
@@ -77,30 +79,51 @@ $(document).ready(function(){
 	// 	else alert("File isn't selected!");
 	// }
 
-	var create_post = function(upload_url){
+	User.post = function(data){
 		var Post = Parse.Object.extend("Post");
 		var myPost = new Post();
 
-		var title = $("#title").val();
-		var comment = $("#comment").val();
-		var user = Parse.User.current().get("username");
+		var title = data.name;
+		var root = data;
+		var user = Parse.User.current.name;
 
-		myPost.set("Title",title);
-		myPost.set("URL",upload_url);
-		myPost.set("Comment",comment);
-		myPost.set("User",user);
+		myPost.set({
+			"Title": title,
+			"root": data,
+			"user": user
+		});
 
 		myPost.save(null,{
 			success: function(){
-				// showPic();
-				var temp  = $("#input_file").html();
-				$("#input_file").html(temp);
-				var item = '<tr><th><img src="' + upload_url + '"></th><th>' + user + '</th><th>' + title + '</th><th>' + comment + '</th></tr>';
-				// $("tbody").append(item);
-				$("tbody").prepend(item);
+				console.log("upload成功")
 			}
-		});
-	};
+		})
+	}
+
+	// var create_post = function(data){
+	// 	var Post = Parse.Object.extend("Post");
+	// 	var myPost = new Post();
+
+	// 	var title = $("#title").val();
+	// 	var comment = $("#comment").val();
+	// 	var user = Parse.User.current().get("username");
+
+	// 	myPost.set("Title",title);
+	// 	myPost.set("URL",upload_url);
+	// 	myPost.set("Comment",comment);
+	// 	myPost.set("User",user);
+
+	// 	myPost.save(null,{
+	// 		success: function(){
+	// 			// showPic();
+	// 			var temp  = $("#input_file").html();
+	// 			$("#input_file").html(temp);
+	// 			var item = '<tr><th><img src="' + upload_url + '"></th><th>' + user + '</th><th>' + title + '</th><th>' + comment + '</th></tr>';
+	// 			// $("tbody").append(item);
+	// 			$("tbody").prepend(item);
+	// 		}
+	// 	});
+	// };
 
 	// var showPic = function(){
 	// 	var query = new Parse.Query("Post");
