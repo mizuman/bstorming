@@ -9,7 +9,8 @@ var socket = io.connect("/");
 function chat(room, name){
 	console.log("chat---" + room + name);
 	socket.on("connected" ,function(){
-		socket.json.emit("init", {"room": room, "name": name});
+		console.log("init msg from client to server");
+		socket.emit("init", {"room": room, "name": name});
 	});
 
 	socket.on("message", function(data){
