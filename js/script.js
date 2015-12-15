@@ -578,15 +578,32 @@ treeJSON = d3.json("../data/flare.json", function(error, treeData) {
         });
         $(".map-JSON").on("click", function(){
             var memberfilter = ["name", "children", "_children"];
+            var output = root;
+            for(var key in output){
+                if(memberfilter.indexOf(key) < 0){
+                    console.log(key);
+                    delete output[key];
+                }
+            }
+            // console.log(output);
+            // User.post(output);
+            var memberfilter = ["name", "children", "_children"];
             var output = JSON.stringify(root, memberfilter, "  ");
+            // output = JSON.stringify(output);
             // console.log(output);
             $(".modal-body").append($("<code>").text(output));
 
         });
         $(".map-save").on("click", function(){
-            // var memberfilter = ["name", "children", "_children"];
-            // var output = JSON.stringify(root, memberfilter, "  ");
-            User.post(root);
+            var memberfilter = ["name", "children", "_children"];
+            var output = root;
+            for(var key in output){
+                if(memberfilter.indexOf(key) < 0){
+                    delete output[key];
+                }
+            }
+            console.log(output);
+            User.post(output);
         });
     })();
 });
