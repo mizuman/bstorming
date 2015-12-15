@@ -384,20 +384,18 @@ treeJSON = d3.json("../data/flare.json", function(error, treeData) {
             })
             .on("click", function(d){
                 var selectedCard = $(selectedCardClass).text();
+                selectedCard = selectedCard.substr(0,(selectedCard.length-1)); 
+                console.log(selectedCard);
                 if(selectedCard){
-                    console.log("hogehoge")
                     if(!d.children){
                         toggleChildren(d);
                     }
-                    console.log(d.children);
                     if(typeof d.children !== 'undefined') {
-                        console.log(d.children);
                         d.children[d.children.length] = {"name": selectedCard};                        
                     }
                     else {
                         d.children = [{"name": selectedCard}];
                     }
-                    console.log(d.children);
                     $(selectedCardClass).remove();
                     update(d);
                 }
@@ -571,6 +569,21 @@ treeJSON = d3.json("../data/flare.json", function(error, treeData) {
                             }
                           });
     }
+
+    (function(){
+        $(".map-create").on("click", function(){
+            root = {"name": "ブレストのテーマは？"};
+            update(root);
+            centerNode(root);
+        });
+        $(".map-JSON").on("click", function(){
+            var memberfilter = ["name", "children", "_children"];
+            var output = JSON.stringify(root, memberfilter, "  ");
+            // console.log(output);
+            $(".modal-body").append($("<code>").text(output));
+
+        });
+    })();
 });
 
 (function(){
@@ -583,7 +596,6 @@ treeJSON = d3.json("../data/flare.json", function(error, treeData) {
                       "class": 'list-group-item ideaCards',
                       "type": "button"
                     })
-                    .prepend('<button type="button" class="close" data-dismiss="alert">×</button>')
                     .text($createIdea.val())
                     .on("click", function(){
                         if($(this).hasClass('list-group-item-info')){
@@ -593,7 +605,15 @@ treeJSON = d3.json("../data/flare.json", function(error, treeData) {
                             $(".list-group-item").removeClass("list-group-item-info");
                             $(this).addClass('list-group-item-info');
                         }
-                    });
+                    })
+                    .append($("<span>").attr({
+                            "class": 'badge'
+                        })
+                        .text("x")
+                        .on("click", function(){
+                            $(this).parent().remove();
+                        })
+                    );
       $(".workplace-list").prepend($item);
       $createIdea.val("");
     }
@@ -606,7 +626,6 @@ treeJSON = d3.json("../data/flare.json", function(error, treeData) {
     mySlidebars = new $.slidebars({
       siteClose: false
     });
-    mySlidebars.slidebars.open("right");
-
+    mySlidebars.slidebars.open("left");
   });
 })(jQuery);
