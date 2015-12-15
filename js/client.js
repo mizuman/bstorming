@@ -7,17 +7,17 @@ socket.on('connect', function(){
 var socket = io.connect("/");
 
 function chat(room, name){
-	console.log("chat---" + room + name);
+
 	socket.on("connected" ,function(){
 		console.log("init msg from client to server");
 		socket.emit("init", {"room": room, "name": name});
 	});
 
-	socket.on("message", function(data){
-		if(data){
-			update(data);
-		}
-	});
+	socket.on("comment", function(data){
+		console.log("get comment");
+		console.log(data)
+	})
+
 
 	socket.on("system", function(data){
 		console.log(data);
@@ -33,7 +33,7 @@ function send(name) {
 function update(data) {
 	// var $obj = $("<div>").text(data);
 	// $("#view").append($obj);
-	console.log(data);
+	// console.log(data);
 }
 
 (function(){
