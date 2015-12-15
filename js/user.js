@@ -24,6 +24,7 @@ $(document).ready(function(){
 		$(".btn-service").removeAttr('disabled');
 		$("#username").attr('disabled', 'disabled');
 		$("#password").attr('disabled', 'disabled');
+		User.getPost();
 	}
 
 	var userSignup = function(){
@@ -85,7 +86,9 @@ $(document).ready(function(){
 
 		var title = data.name;
 		var root = data;
-		var user = Parse.User.current.name;
+		var user = Parse.User.current().get("username");
+
+		console.log(user);
 
 		myPost.set({
 			"Title": title,
@@ -96,6 +99,7 @@ $(document).ready(function(){
 		myPost.save(null,{
 			success: function(){
 				console.log("upload成功")
+				alert("upload complete");
 			}
 		})
 	}
@@ -124,6 +128,24 @@ $(document).ready(function(){
 	// 		}
 	// 	});
 	// };
+
+	User.getPost = function(){
+		var query = new Parse.Query("Post");
+		var user = Parse.User.current().get("username");
+
+		query.equalTo("user", user);
+		query.ascending("root");
+		query.find({
+			success:function(results){
+				showResults(results);
+			}
+		})
+	}
+
+	var showResults = function(results){
+		console.log(results);
+		console.log(results[0].root);
+	}
 
 	// var showPic = function(){
 	// 	var query = new Parse.Query("Post");
