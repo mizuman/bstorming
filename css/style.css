@@ -114,3 +114,22 @@
 input {
   width: 70%;
 }
+
+.chat-area {
+  height: 30%;
+  width: 100%;
+  bottom: 0px;
+  margin-top: 10px;
+}
+
+#history {
+  height: auto;
+  width: 100%;
+  background-color: #eee;
+}
+
+#comment {
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+}
