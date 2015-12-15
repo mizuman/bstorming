@@ -584,9 +584,9 @@ treeJSON = d3.json("../data/flare.json", function(error, treeData) {
 
         });
         $(".map-save").on("click", function(){
-            var memberfilter = ["name", "children", "_children"];
-            var output = JSON.stringify(root, memberfilter, "  ");
-            User.post(output);
+            // var memberfilter = ["name", "children", "_children"];
+            // var output = JSON.stringify(root, memberfilter, "  ");
+            User.post(root);
         });
     })();
 });
