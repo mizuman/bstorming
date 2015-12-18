@@ -73,10 +73,11 @@ $(document).ready(function(){
 	function uploadFile (title, data) {
         var memberfilter = ["name", "children", "_children"];
 		// var sendData = JSON.stringify(data, memberfilter, "\t");
-		var sendData = window.btoa(JSON.stringify(data, memberfilter, "\t"));
+		var s = JSON.stringify(data, memberfilter, "\t");
+		var sendData = window.btoa(unescape(encodeURIComponent(s)));
 		// var sendData = data;
 		console.log(title,sendData);
-		var parseFile = new Parse.File(title+".json", {base64: sendData});
+		var parseFile = new Parse.File("treedata.json", {base64: sendData});
 
 		parseFile.save().then(function (uploadInfo){
 			createPost(title, uploadInfo.url());
