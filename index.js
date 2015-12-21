@@ -13,23 +13,29 @@ server.listen(port);
 
 console.log("http server listening on %d", port);
 
-var chat = io.sockets.on("connection", function(client){
+io.on("connection", function(socket){
 
-	client.emit("system", {name:"system", msg:"connected"});
+	console.log("connected");
+	socket.emit("connected", {name:"system", msg:"connected"});
 
-	client.on("msg", function(data){
+	socket.on("msg", function(data){
 		console.log(data);
 	});
 
-	client.on("init", function(data){
+	socket.on("init", function(data){
 		console.log(data);
+		socket.join(data.room);
 	});
 
-	client.on("comment", function(data){
-		chat.to(data.room).emit("comment", data);
+	socket.on("comment", function(data){
+		console.log(data);
+		// socket.emit("comment", data);
+		// socket.broadcast.emit("comment", data);
+		socket.to(data.room).emit("comment", data);
+		// socket.to(data.room).emit("comment", data);
 	});
 
-	client.on("disconnect", function(){
+	socket.on("disconnect", function(){
 		console.log("disconnected");
 	});
 });
