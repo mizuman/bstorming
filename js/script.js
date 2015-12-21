@@ -1,5 +1,7 @@
+function TreeMap(){}
+
 // Get JSON data
-treeJSON = d3.json("../data/flare.json", function(error, treeData) {
+treeJSON = d3.json("../data/empty.json", function(error, treeData) {
 
     // Calculate total nodes, max label length
     var totalNodes = 0;
@@ -546,6 +548,14 @@ treeJSON = d3.json("../data/flare.json", function(error, treeData) {
     update(root);
     centerNode(root);
 
+    TreeMap.loadMap = function (json_url){
+        d3.json(json_url, function(e,d) {
+            root = d;
+            update(root);
+            centerNode(root);
+        });
+    };
+
     function editName(d, msg) {
       mySlidebars.slidebars.open("right");
       $(".nodeNameInput").remove();
@@ -564,8 +574,9 @@ treeJSON = d3.json("../data/flare.json", function(error, treeData) {
                           .keypress(function(e){
                             if(e.which==13){
                               d.name = $(".nodeNameInput").val();
-                              console.log(d);
+                              // console.log(d);
                               update(d);
+                              $(".nodeNameInput").blur();
                             }
                           });
     }
@@ -605,6 +616,9 @@ treeJSON = d3.json("../data/flare.json", function(error, treeData) {
             // }
             console.log(output);
             User.post(output);
+        });
+        $(".map-load").on("click", function(){
+            User.getPost();
         });
     })();
 });

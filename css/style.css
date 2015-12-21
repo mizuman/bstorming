@@ -78,6 +78,11 @@
   padding-right: 10px;
 }
 
+#map-list {
+  height: 70%;
+  overflow: scroll;
+}
+
 .nodeInfo {
   height: 18%;
   margin: 5%;

@@ -1,4 +1,4 @@
-function User(){};
+function User(){}
 
 $(document).ready(function(){
 	var APP_ID = "8DIsPS88JKgLxPJhh9zyt9TC5C03bMDs5il6r8fi";
@@ -17,14 +17,13 @@ $(document).ready(function(){
 		$(".btn-service").hide();
 		// $("#username").removeAttr('disabled');
 		// $("#password").removeAttr('disabled');
-	};
+	}
 
 	function showService() {
 		$(".btn-verify").hide();
 		$(".btn-service").show();
 		// $("#username").attr('disabled', 'disabled');
 		// $("#password").attr('disabled', 'disabled');
-		// User.getPost();
 	}
 
 	var userSignup = function(){
@@ -101,6 +100,7 @@ $(document).ready(function(){
 		myPost.save(null,{
 			success: function(){
 				console.log("upload成功")
+				User.getPost();
 			}
 		})
 	}
@@ -119,7 +119,8 @@ $(document).ready(function(){
 	}
 
 	var showResults = function(results){
-		console.log(results);
+		// console.log(results);
+		$(".load-map").remove();
 
 		for(var i=0; i < results.length; i++){
 			var entry = results[i];
@@ -127,12 +128,28 @@ $(document).ready(function(){
 			var title = entry.get("Title");
 			var url = entry.get("url");
 
-			console.log(title, url)
+			console.log("-----", title, url);
 
-			d3.json(url, function(error, treeData){
-				console.log("hoge");
-				console.log(treeData);
-			})
+			var $item = $("<button>")
+						.attr({
+							type: 'button',
+							class: "list-group-item load-map"
+						})
+						.text(title)
+						.val(url)
+						.on("click", function(event){
+							TreeMap.loadMap($(this).val());
+						})
+						// .bind({map_title:title, map_url:url});
+
+			$("#map-list").append($item);
+
+			// $("#map-list").append()
+
+			// d3.json(url, function(error, treeData){
+			// 	console.log("hoge");
+			// 	console.log(treeData);
+			// })
 		}
 	}
 
