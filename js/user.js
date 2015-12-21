@@ -6,12 +6,6 @@ $(document).ready(function(){
 	
 	Parse.initialize(APP_ID, JS_KEY);
 
-	if(Parse.User.current()){
-		showService();
-	} else {
-		showVerigy();
-	}
-
 	function showVerigy() {
 		$(".btn-verify").show();
 		$(".btn-service").hide();
@@ -75,7 +69,7 @@ $(document).ready(function(){
 		var s = JSON.stringify(data, memberfilter, "\t");
 		var sendData = window.btoa(unescape(encodeURIComponent(s)));
 		// var sendData = data;
-		console.log(title,sendData);
+		// console.log(title,sendData);
 		var parseFile = new Parse.File("treedata.json", {base64: sendData});
 
 		parseFile.save().then(function (uploadInfo){
@@ -128,7 +122,7 @@ $(document).ready(function(){
 			var title = entry.get("Title");
 			var url = entry.get("url");
 
-			console.log("-----", title, url);
+			// console.log("-----", title, url);
 
 			var $item = $("<button>")
 						.attr({
@@ -197,9 +191,16 @@ $(document).ready(function(){
 				break;
 		}
 	}
+
+	if(Parse.User.current()){
+		showService();
+		User.getPost();
+	} else {
+		showVerigy();
+	}
 	
 	$("#signup").on("click", function(event){
-		console.log("hoge");
+		// console.log("hoge");
 		event.preventDefault()
 		userSignup();
 	})
