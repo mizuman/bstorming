@@ -1,0 +1,8 @@
+{
+ "name": "Today's theme",
+ "children": [
+  {"name": "STEP1: create new map"},
+  {"name": "STEP2: save your map"},
+  {"name": "STEP3: load your map"}
+ ]
+}
