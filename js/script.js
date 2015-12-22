@@ -1,7 +1,7 @@
 function TreeMap(){}
 
 // Get JSON data
-treeJSON = d3.json("/data/empty.json", function(error, treeData) {
+treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 
     // Calculate total nodes, max label length
     var totalNodes = 0;
@@ -424,9 +424,11 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
                 return d.name;
             })
             .on("click", function(d){
+                TreeMap.focusNode = d;
                 editName(d, "showInfo");
             })
             .on("dblclick", function(d){
+                TreeMap.focusNode = d;
                 editName(d, "editInfo");
             })
             .style("fill-opacity", 0);
@@ -566,14 +568,27 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
 
     function editName(d, msg) {
       mySlidebars.slidebars.open("right");
-      $(".nodeNameInput").remove();
-      $(".nodeName").append(
+      $(".nodeInfo").html("");
+      $(".nodeInfo").append(
+        $("<p>").attr('class', 'nodeName')
+                .append(
                         $("<input>").attr({
                           "type": "text",
                           "value": d.name,
                           "class": "nodeNameInput form-control"
                         })
-                      );
+                )
+        )
+        .append(
+                        $("<button>").attr({
+                            class: 'btn btn-danger node-delete'
+                        })
+                        .text("Delete")
+                        .on("click", function(){
+                            console.log("node-delete");
+                            deleteNode(TreeMap.focusNode);
+                        })
+                    )
 
       if(msg == "editInfo"){
         $(".nodeNameInput").focus();
@@ -585,8 +600,31 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
                               // console.log(d);
                               update(d);
                               $(".nodeNameInput").blur();
+                              mySlidebars.slidebars.close();
                             }
                           });
+    }
+
+    function deleteNode(d) {
+        mySlidebars.slidebars.open("right");
+        console.log(d);
+        console.log(d.parent);
+
+        if(typeof d.parent == "undefined") {
+            var url = "/data/empty.json";
+            TreeMap.loadMap(url);
+        }
+        else {
+            var index = d.parent.children.indexOf(d);
+            if (index > -1) {
+                d.parent.children.splice(index, 1);
+            }
+            update(d);
+        }
+        $(".nodeInfo").html("");
+        TreeMap.focusNode = null;
+        mySlidebars.slidebars.toggle("right");
+
     }
 
     (function(){
@@ -595,26 +633,16 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
             TreeMap.loadMap(url);
         });
         $(".map-JSON").on("click", function(){
-            var memberfilter = ["name", "children", "_children"];
-            var output = root;
-            for(var key in output){
-                if(memberfilter.indexOf(key) < 0){
-                    console.log(key);
-                    delete output[key];
-                }
-            }
-            // console.log(output);
-            // User.post(output);
+
             var memberfilter = ["name", "children", "_children"];
             var output = JSON.stringify(root, memberfilter, "\t");
-            // output = JSON.stringify(output);
-            // console.log(output);
-            $(".modal-body").append($("<code>").text(output));
+            mySlidebars.slidebars.toggle("left");
+            $(".modal-body").html("<pre><code>" + output + "</code></pre>");
 
         });
         $(".map-save").on("click", function(){
             console.log("map-save");
-            var memberfilter = ["name", "children", "_children"];
+            // var memberfilter = ["name", "children", "_children"];
             var output = root;
             // for(var key in output){
             //     if(memberfilter.indexOf(key) < 0){

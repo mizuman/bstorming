@@ -1,34 +1,8 @@
 {
 	"name": "Today's theme",
-	"children": [
-		{
-			"name": "STEP1: create new map",
-			"depth": 1,
-			"x": 12.5,
-			"x0": 12.5,
-			"y": 210,
-			"y0": 210
-		},
-		{
-			"name": "STEP2: save your map",
-			"depth": 1,
-			"x": 37.5,
-			"x0": 37.5,
-			"y": 210,
-			"y0": 210
-		},
-		{
-			"name": "STEP3: load your map",
-			"depth": 1,
-			"x": 62.5,
-			"x0": 62.5,
-			"y": 210,
-			"y0": 210
-		}
-	],
 	"depth": 0,
-	"x": 37.5,
-	"x0": 37.5,
+	"x": 12.5,
+	"x0": 12.5,
 	"y": 0,
 	"y0": 0
 }
