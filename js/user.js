@@ -64,9 +64,21 @@ $(document).ready(function(){
 	}
 
 	function uploadFile (title, data) {
-        var memberfilter = ["name", "children", "_children"];
-		// var sendData = JSON.stringify(data, memberfilter, "\t");
+		var memberfilter = [
+			"name",
+			"children",
+			"_children",
+			"depth",
+			"x",
+			"x0",
+			"y",
+			"y0"
+			];
 		var s = JSON.stringify(data, memberfilter, "\t");
+		// var _s = JSON.stringify(data);
+
+		console.log(data,s);
+
 		var sendData = window.btoa(unescape(encodeURIComponent(s)));
 		// var sendData = data;
 		// console.log(title,sendData);

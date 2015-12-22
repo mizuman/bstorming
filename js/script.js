@@ -549,8 +549,16 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
     centerNode(root);
 
     TreeMap.loadMap = function (json_url){
-        d3.json(json_url, function(e,d) {
-            root = d;
+        d3.json(json_url, function(e,_treeData) {
+            totalNodes = 0;
+            visit(_treeData, function(d) {
+                totalNodes++;
+                maxLabelLength = Math.max(d.name.length, maxLabelLength);
+
+            }, function(d) {
+                return d.children && d.children.length > 0 ? d.children : null;
+            });
+            root = _treeData;
             update(root);
             centerNode(root);
         });
@@ -583,9 +591,8 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
 
     (function(){
         $(".map-create").on("click", function(){
-            root = {"name": "ブレストのテーマは？"};
-            update(root);
-            centerNode(root);
+            var url = "/data/empty.json";
+            TreeMap.loadMap(url);
         });
         $(".map-JSON").on("click", function(){
             var memberfilter = ["name", "children", "_children"];
