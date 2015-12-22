@@ -4,8 +4,13 @@
 //     console.log("connected");
 // });
 
-var socket = io.connect("http://localhost:5000");
-// var socket = io.connect("/");
+// var socket = io.connect("http://localhost:5000");
+var socket;
+if(location.hostname=="localhost"){
+	socket = io.connect("http://localhost:5000");
+} else {
+	socket = io.connect("/");
+}
 
 function chat(room, name){
 
@@ -24,18 +29,6 @@ function chat(room, name){
 
 	});
 }
-
-// function send(name) {
-// 	var data = $("#comment").val();
-// 	socket.json.send(data);
-// 	$("#comment").val("");
-// }
-
-// function update(data) {
-// 	// var $obj = $("<div>").text(data);
-// 	// $("#view").append($obj);
-// 	// console.log(data);
-// }
 
 (function(){
 	var room, name;
