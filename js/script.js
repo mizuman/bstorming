@@ -642,14 +642,7 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
         });
         $(".map-save").on("click", function(){
             console.log("map-save");
-            // var memberfilter = ["name", "children", "_children"];
             var output = root;
-            // for(var key in output){
-            //     if(memberfilter.indexOf(key) < 0){
-            //         delete output[key];
-            //     }
-            // }
-            console.log(output);
             User.post(output);
         });
         $(".map-load").on("click", function(){

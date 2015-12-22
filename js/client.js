@@ -21,6 +21,7 @@ function chat(room, name){
 
 	socket.on("system", function(data){
 		console.log(data);
+
 	});
 }
 

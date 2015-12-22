@@ -29,6 +29,7 @@ $(document).ready(function(){
 		signup_user.signUp(null, {
 			success: function(result_user){
 				changeView('service');
+				User.getPost();
 			},
 			error: function(result_user, error){
 				alert("error" + error.message);
@@ -44,7 +45,7 @@ $(document).ready(function(){
 		Parse.User.logIn(username,password,{
 			success: function(result_user) {
 				changeView('service');
-				// showPic();
+				User.getPost();
 			},
 			error: function(result_user, error) {
 				alert("error");
@@ -55,6 +56,7 @@ $(document).ready(function(){
 	var userLogout = function(){
 		Parse.User.logOut();
 		changeView('user-verify');
+		$(".load-map").remove();
 	};
 
 	User.post = function(data){
@@ -96,11 +98,13 @@ $(document).ready(function(){
 		var Post = Parse.Object.extend("Post");
 		var myPost = new Post();
 		var user = Parse.User.current().get("username");
+		var room = location.hash.substr(1);
 
 		myPost.set({
 			"Title": title,
 			"url": url,
-			"user": user
+			"user": user,
+			"room": room
 		});
 
 		myPost.save(null,{
@@ -111,51 +115,69 @@ $(document).ready(function(){
 		})
 	}
 
-	User.getPost = function(){
+	User.getPost = function(type){
+		if(typeof type == "undefined") type = "user";
+
 		var query = new Parse.Query("Post");
 		var user = Parse.User.current().get("username");
+		var room = location.hash.substr(1);
 
-		query.equalTo("user", user);
-		query.ascending("root");
+		if(type=="user") {
+			query.equalTo("user", user);
+		} else if (type=="room") {
+			query.equalTo("room", room);
+		}
+
+		
+		// query.ascending("root");
 		query.find({
 			success:function(results){
-				showResults(results);
+				if(type=="user"){
+					showResults(results, "reset");
+					User.getPost("room");
+				}
+				if(type=="room"){
+					showResults(results, "append");
+				}
 			}
 		})
 	}
 
-	var showResults = function(results){
+	var showResults = function(results, reflesh){
 		// console.log(results);
-		$(".load-map").remove();
+		if(reflesh=="reset") {
+			$(".load-map").remove();
+			console.log("reset load map list");
+		}
+
+		var user = Parse.User.current().get("username");
 
 		for(var i=0; i < results.length; i++){
 			var entry = results[i];
 
 			var title = entry.get("Title");
 			var url = entry.get("url");
+			var entryUser = entry.get("user");
 
-			// console.log("-----", title, url);
+			if(reflesh == "reset" || user !== entryUser){
+				var $item = $("<button>")
+							.attr({
+								type: 'button',
+								class: "list-group-item load-map " + reflesh + "-map"
+							})
+							.text(title)
+							.val(url)
+							.on("click", function(event){
+								TreeMap.loadMap($(this).val());
+							})
+							.append(
+								$("<span>")
+								.attr('class', 'badge')
+								.text(entryUser)
+							);
 
-			var $item = $("<button>")
-						.attr({
-							type: 'button',
-							class: "list-group-item load-map"
-						})
-						.text(title)
-						.val(url)
-						.on("click", function(event){
-							TreeMap.loadMap($(this).val());
-						})
-						// .bind({map_title:title, map_url:url});
-
-			$("#map-list").append($item);
-
-			// $("#map-list").append()
-
-			// d3.json(url, function(error, treeData){
-			// 	console.log("hoge");
-			// 	console.log(treeData);
-			// })
+				$("#map-list").append($item);
+			}
 		}
 	}
 

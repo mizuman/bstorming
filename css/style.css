@@ -83,6 +83,14 @@
   overflow: scroll;
 }
 
+#map-list > .append-map {
+  background-color: #D9EDF7;
+}
+
+#map-list > .user-map {
+  background-color: #eee;
+}
+
 .nodeInfo {
   height: 18%;
   margin: 5%;
