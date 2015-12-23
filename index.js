@@ -25,14 +25,22 @@ io.on("connection", function(socket){
 	socket.on("init", function(data){
 		console.log(data);
 		socket.join(data.room);
+		socket.to(data.room).emit("init", data);
+	});
+
+	socket.on("welcome", function(data){
+		console.log(data);
+		socket.to(data.room).emit("welcome", data);
+	})
+
+	socket.on("system", function(data){
+		console.log(data);
+		socket.to(data.room).emit("system", data);
 	});
 
 	socket.on("comment", function(data){
 		console.log(data);
-		// socket.emit("comment", data);
-		// socket.broadcast.emit("comment", data);
 		socket.to(data.room).emit("comment", data);
-		// socket.to(data.room).emit("comment", data);
 	});
 
 	socket.on("disconnect", function(){

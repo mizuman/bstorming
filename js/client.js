@@ -1,10 +1,3 @@
-// var socket = io();
-
-// socket.on('connect', function(){
-//     console.log("connected");
-// });
-
-// var socket = io.connect("http://localhost:5000");
 var socket;
 if(location.hostname=="localhost"){
 	socket = io.connect("http://localhost:5000");
@@ -12,12 +5,25 @@ if(location.hostname=="localhost"){
 	socket = io.connect("/");
 }
 
-function chat(room, name){
+function chat(room, user){
 
 	socket.on("connected" ,function(){
 		console.log("init msg from client to server");
-		socket.emit("init", {"room": room, "name": name});
+		chat.sendInit();
 	});
+
+	socket.on("init", function(data){
+		console.log(data);
+		var _data = {
+			type: "welcome",
+			cardsNum: TreeMap.checkCardsNum()
+		};
+		chat.send(_data);
+	});
+
+	socket.on("welcome", function(data){
+		console.log(data);
+	})
 
 	socket.on("comment", function(data){
 		console.log("get comment");
@@ -28,32 +34,37 @@ function chat(room, name){
 		console.log(data);
 
 	});
+
+	chat.setUser = function(_user){
+		user = _user;
+	};
+
+	chat.checkUser = function(){
+		return user;
+	};
+
+	chat.send = function(data){
+		if(typeof data == "undefined") data = {type: "undefined"};
+		data.room = room;
+		data.user = user;
+		data.socketId = socket.id;
+		socket.emit(data.type, data);
+	};
+
+	chat.sendInit = function(){
+		var data = {};
+		data.type = "init";
+		chat.send(data);
+	};
+
+	chat.sendSysMsg = function(data){
+		data.type = "system";
+		chat.send(data);
+	};
+
+	chat.sendComment = function(data){
+		data.type = "comment";
+		chat.send(data);
+	};
+
 }
-
-(function(){
-	var room, name;
-	if(location.hash) {
-		room = location.hash.substr(1);
-	} else {
-		room = "public";
-	}
-
-	if($("#myid").val()) {
-		name = $("#myid").val();
-	} else {
-		name = Math.random().toString(36).slice(-8);
-	}
-
-	chat(room,name);
-
-	$("#comment").keypress(function(e){
-		if(e.which==13){
-			if($("#comment").val()){
-				var msg = $("#comment").val();
-				console.log(msg);
-				socket.json.emit("comment", {"room": room, "name": name, "msg": msg});
-				$("#comment").val("");
-			}
-		}
-	});
-})();

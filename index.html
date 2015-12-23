@@ -15,8 +15,8 @@
 <body>
   <nav>
     <ul class="pager sb-slide">
-      <li class="previous disabled sb-toggle-left"><a href="#"><span aria-hidden="true">&larr;</span> User</a></li>
-      <li class="next sb-toggle-right"><a href="#">Your ideas <span aria-hidden="true">&rarr;</span></a></li>
+      <li id="leftMenuBtn" class="previous disabled sb-toggle-left"><a href="#"><span aria-hidden="true">&larr;</span> User</a></li>
+      <li id="rightMenuBtn" class="next sb-toggle-right"><a href="#">Your ideas <span aria-hidden="true">&rarr;</span></a></li>
     </ul>
   </nav>
   <div id="tree-container"></div>
@@ -31,7 +31,7 @@
         
       </div>
       <div class="workplace-input">
-        <input class="form-control" placeholder="note your idea"/>
+        <input id="createCard" class="form-control" placeholder="note your idea"/>
       </div>
     </div>
   </div>
@@ -69,7 +69,7 @@
 
     <div class="chat-area">
       <div id="history"></div>
-      <input type="text" class="form-control" id="comment" placeholder="msg testing">
+      <input type="text" class="form-control" id="comment" placeholder="msg testing" disabled="disabled">
     </div>
   </div>
 
@@ -95,9 +95,11 @@
   <script src="lib/d3/d3.min.js"></script>
   <script src="lib/bootstrap.min.js"></script>
   <script src="lib/slidebars.min.js"></script>
-  <script src="js/script.js"></script>
   <script src="js/client.js"></script>
   <script src="js/user.js"></script>
+  <script src="js/treemap.js"></script>
+
+  <script src="js/script.js"></script>
 
 </body>
 </html>

@@ -3,21 +3,17 @@ function User(){}
 $(document).ready(function(){
 	var APP_ID = "8DIsPS88JKgLxPJhh9zyt9TC5C03bMDs5il6r8fi";
 	var JS_KEY = "RfsESAxLLE2ePcTfgydba0M8OrCyOqJpAGaYx9Ih";
-	
-	Parse.initialize(APP_ID, JS_KEY);
+
+	var userList = [];
 
 	function showVerigy() {
 		$(".btn-verify").show();
 		$(".btn-service").hide();
-		// $("#username").removeAttr('disabled');
-		// $("#password").removeAttr('disabled');
 	}
 
 	function showService() {
 		$(".btn-verify").hide();
 		$(".btn-service").show();
-		// $("#username").attr('disabled', 'disabled');
-		// $("#password").attr('disabled', 'disabled');
 	}
 
 	var userSignup = function(){
@@ -46,6 +42,7 @@ $(document).ready(function(){
 			success: function(result_user) {
 				changeView('service');
 				User.getPost();
+				chat.setUser(username);
 			},
 			error: function(result_user, error) {
 				alert("error");
@@ -77,13 +74,10 @@ $(document).ready(function(){
 			"y0"
 			];
 		var s = JSON.stringify(data, memberfilter, "\t");
-		// var _s = JSON.stringify(data);
 
 		console.log(data,s);
 
 		var sendData = window.btoa(unescape(encodeURIComponent(s)));
-		// var sendData = data;
-		// console.log(title,sendData);
 		var parseFile = new Parse.File("treedata.json", {base64: sendData});
 
 		parseFile.save().then(function (uploadInfo){
@@ -181,36 +175,6 @@ $(document).ready(function(){
 		}
 	}
 
-	// var showPic = function(){
-	// 	var query = new Parse.Query("Post");
-	// 	var user = Parse.User.current().get("username");
-
-	// 	query.equalTo("User", user);
-	// 	query.ascending("updatedAt");
-	// 	query.find({
-	// 		success:function(results){
-	// 			makeHtml(results);
-	// 		}
-	// 	});
-	// }
-
-	// var makeHtml = function(results){
-	// 	// $("#display").append("hoge");
-	// 	for(var i=0; i < results.length; i++){
-	// 		var entry = results[i];
-
-	// 		var title = entry.get("Title");
-	// 		var image = entry.get("URL");
-	// 		var comment = entry.get("Comment");
-	// 		var user = entry.get("User");
-
-	// 		var item = '<tr><th><img src="' + image + '"></th><th>' + user + '</th><th>' + title + '</th><th>' + comment + '</th></tr>';
-	// 		// $("tbody").append(item);
-	// 		$("tbody").prepend(item);
-
-	// 	}
-	// }
-
 	var changeView = function(side){
 		switch(side){
 			case 'service':
@@ -226,12 +190,42 @@ $(document).ready(function(){
 		}
 	}
 
-	if(Parse.User.current()){
-		showService();
-		User.getPost();
-	} else {
-		showVerigy();
+	function joinRoom(){
+		var room, user, id;
+
+		// set room
+		if(location.hash){
+			room = location.hash.substr(1);
+		} else {
+			room = "public";
+		}
+
+		// set user name
+		if(Parse.User.current()){
+			user = Parse.User.current().get("username");
+		} else {
+			user = "guest";
+		}
+
+		id = Math.random().toString(36).slice(-8);
+
+		chat(room, user);
+		$("#comment").removeAttr('disabled');
 	}
+
+	function init() {
+		Parse.initialize(APP_ID, JS_KEY);
+		joinRoom();
+
+		if(Parse.User.current()){
+			showService();
+			User.getPost();
+		} else {
+			showVerigy();
+		}
+	}
+
+	init();
 	
 	$("#signup").on("click", function(event){
 		// console.log("hoge");
