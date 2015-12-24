@@ -157,7 +157,14 @@ $(document).ready(function(){
 							.text(title)
 							.val(url)
 							.on("click", function(event){
-								TreeMap.loadMap($(this).val());
+								var url = $(this).val()
+								TreeMap.loadMap(url);
+								var data = {
+									msg: "loadMap",
+									type: "system",
+									url: url
+								};
+								chat.sendSysMsg(data);
 							})
 							.append(
 								$("<span>")

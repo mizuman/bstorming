@@ -1,5 +1,4 @@
 function TreeMap(){
-	// TreeMap.root = {};
 
 	TreeMap.checkCardsNum = function(){
 		return $(".ideaCards").length;
@@ -394,14 +393,12 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 			})
 			.on("click", function(d){
 				var selectedCard = $(selectedCardClass).text();
-				selectedCard = selectedCard.substr(0,(selectedCard.length-1)); 
-				console.log(selectedCard);
 				if(selectedCard){
 					if(!d.children){
 						toggleChildren(d);
 					}
 					if(typeof d.children !== 'undefined') {
-						d.children[d.children.length] = {"name": selectedCard};                        
+						d.children[d.children.length] = {"name": selectedCard};
 					}
 					else {
 						d.children = [{"name": selectedCard}];
@@ -433,11 +430,11 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 			})
 			.on("click", function(d){
 				TreeMap.focusNode = d;
-				editName(d, "showInfo");
+				TreeMap.editName(d, "showInfo");
 			})
 			.on("dblclick", function(d){
 				TreeMap.focusNode = d;
-				editName(d, "editInfo");
+				TreeMap.editName(d, "editInfo");
 			})
 			.style("fill-opacity", 0);
 
@@ -574,49 +571,98 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 		});
 	};
 
-	function editName(d, msg) {
+	TreeMap.checkNodePath = function(path, d){
+		if(d.parent) {
+			var index = d.parent.children.indexOf(d);
+			path.unshift(index);
+			return TreeMap.checkNodePath(path, d.parent);
+		}
+		else {
+			return path;
+		}
+	};
+
+	TreeMap.pickUpNodeByPath = function(path, d){
+		console.log(path);
+		var index = path.splice(0,1);
+		if(path.length > 0){
+			TreeMap.pickUpNodeByPath(path,d.children[index]);
+		} else {
+			return d.children[index];
+		}
+	};
+
+	TreeMap.changeName = function(d, name){
+		d.name = name;
+		update(d);
+	}
+
+	TreeMap.editName = function(d, msg) {
 		mySlidebars.slidebars.open("right");
 		$(".nodeInfo").html("");
 		$(".nodeInfo").append(
 		$("<p>").attr('class', 'nodeName')
 				.append(
-						$("<input>").attr({
-							"type": "text",
-							"value": d.name,
-							"class": "nodeNameInput form-control"
-						})
+					$("<input>").attr({
+						"type": "text",
+						"value": d.name,
+						"class": "nodeNameInput form-control"
+					})
 				)
 		)
 		.append(
-						$("<button>").attr({
-							class: 'btn btn-danger node-delete'
-						})
-						.text("Delete")
-						.on("click", function(){
-							console.log("node-delete");
-							deleteNode(TreeMap.focusNode);
-						})
-					)
+			$("<button>").attr({
+				class: 'btn btn-danger node-delete'
+			})
+			.text("Delete")
+			.on("click", function(){
+				console.log("node-delete");
+				var path = [];
+				path = TreeMap.checkNodePath(path,d);
+
+				var data = {
+					msg:"deleteNode",
+					type: "system",
+					path: path
+				};
+				chat.sendSysMsg(data);
+
+				TreeMap.deleteNode(TreeMap.focusNode);
+				$(".nodeInfo").html("");
+				TreeMap.focusNode = null;
+				mySlidebars.slidebars.toggle("right");
+			})
+		);
 
 		if(msg == "editInfo"){
-		$(".nodeNameInput").focus();
+			$(".nodeNameInput").focus();
 		}
 		$(".nodeNameInput").val(d.name)
 							.keypress(function(e){
-							if(e.which==13){
-								d.name = $(".nodeNameInput").val();
-								// console.log(d);
-								update(d);
-								$(".nodeNameInput").blur();
-								mySlidebars.slidebars.close();
-							}
+								if(e.which==13){
+									var path = [];
+									path = TreeMap.checkNodePath(path,d);
+									console.log("path: ", path);
+
+									var _name = $(".nodeNameInput").val()
+
+									TreeMap.changeName(d,_name);
+
+									var data = {
+										msg: "editNodeName",
+										type: "system",
+										path: path,
+										nodeName: _name
+									}
+									chat.sendSysMsg(data);
+
+									$(".nodeNameInput").blur();
+									mySlidebars.slidebars.close();
+								}
 							});
 	}
 
-	function deleteNode(d) {
-		mySlidebars.slidebars.open("right");
-		console.log(d);
-		console.log(d.parent);
+	TreeMap.deleteNode = function(d) {
 
 		if(typeof d.parent == "undefined") {
 			var url = "/data/empty.json";
@@ -629,9 +675,5 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 			}
 			update(d);
 		}
-		$(".nodeInfo").html("");
-		TreeMap.focusNode = null;
-		mySlidebars.slidebars.toggle("right");
-
 	}
 });

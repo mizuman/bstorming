@@ -49,6 +49,14 @@
 
 	$(".map-create").on("click", function(){
 		var url = "/data/empty.json";
+
+		var data = {
+			msg: "loadMap",
+			type: "system",
+			url: url
+		};
+		chat.sendSysMsg(data);
+
 		TreeMap.loadMap(url);
 	});
 	$(".map-JSON").on("click", function(){
@@ -82,8 +90,7 @@
 		if(
 			data.type=="welcome" || 
 			data.type=="init" || 
-			data.type=="system" ||
-			data.type=="CardsNum"
+			data.type=="system"
 		) {
 			addUserList(data);
 		}
@@ -147,7 +154,18 @@
 
 	socket.on("system", function(data){
 		console.log(data);
-		updateUserPresence(data);
+		if(data.msg == "CardsNum"){
+			updateUserPresence(data);
+		}
+		else if(data.msg == "editNodeName"){
+			var targetNode = TreeMap.pickUpNodeByPath(data.path, TreeMap.root);
+			TreeMap.changeName(targetNode,data.nodeName);
+		} else if(data.msg == "deleteNode"){
+			var targetNode = TreeMap.pickUpNodeByPath(data.path, TreeMap.root);
+			TreeMap.deleteNode(targetNode);
+		} else if(data.msg == "loadMap"){
+			TreeMap.loadMap(data.url);
+		}
 	});
 
 	socket.on("disconnected", function(data){
