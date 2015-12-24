@@ -4,8 +4,6 @@ $(document).ready(function(){
 	var APP_ID = "8DIsPS88JKgLxPJhh9zyt9TC5C03bMDs5il6r8fi";
 	var JS_KEY = "RfsESAxLLE2ePcTfgydba0M8OrCyOqJpAGaYx9Ih";
 
-	var userList = [];
-
 	function showVerigy() {
 		$(".btn-verify").show();
 		$(".btn-service").hide();
@@ -54,13 +52,14 @@ $(document).ready(function(){
 		Parse.User.logOut();
 		changeView('user-verify');
 		$(".load-map").remove();
+		chat.setUser("guest");
 	};
 
 	User.post = function(data){
 
 		uploadFile(data.name, data);
 
-	}
+	};
 
 	function uploadFile (title, data) {
 		var memberfilter = [
@@ -74,8 +73,6 @@ $(document).ready(function(){
 			"y0"
 			];
 		var s = JSON.stringify(data, memberfilter, "\t");
-
-		console.log(data,s);
 
 		var sendData = window.btoa(unescape(encodeURIComponent(s)));
 		var parseFile = new Parse.File("treedata.json", {base64: sendData});
@@ -138,10 +135,8 @@ $(document).ready(function(){
 	}
 
 	var showResults = function(results, reflesh){
-		// console.log(results);
 		if(reflesh=="reset") {
 			$(".load-map").remove();
-			console.log("reset load map list");
 		}
 
 		var user = Parse.User.current().get("username");
@@ -228,7 +223,6 @@ $(document).ready(function(){
 	init();
 	
 	$("#signup").on("click", function(event){
-		// console.log("hoge");
 		event.preventDefault()
 		userSignup();
 	})

@@ -15,6 +15,8 @@ console.log("http server listening on %d", port);
 
 io.on("connection", function(socket){
 
+	var room;
+
 	console.log("connected");
 	socket.emit("connected", {name:"system", msg:"connected"});
 
@@ -24,13 +26,14 @@ io.on("connection", function(socket){
 
 	socket.on("init", function(data){
 		console.log(data);
+		room = data.room;
 		socket.join(data.room);
 		socket.to(data.room).emit("init", data);
 	});
 
 	socket.on("welcome", function(data){
 		console.log(data);
-		socket.to(data.room).emit("welcome", data);
+		socket.to(data.to).emit("welcome", data);
 	})
 
 	socket.on("system", function(data){
@@ -44,6 +47,10 @@ io.on("connection", function(socket){
 	});
 
 	socket.on("disconnect", function(){
-		console.log("disconnected");
+		var data = {
+			type: "disconnected",
+			socketId: socket.id
+		};
+		socket.to(room).emit("disconnected", data);
 	});
 });

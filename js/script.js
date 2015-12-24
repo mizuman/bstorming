@@ -1,6 +1,7 @@
 (function(){
 
 	TreeMap();
+	var userList = [];
 
 	$("#comment").keypress(function(e){
 		if(e.which==13){
@@ -32,18 +33,17 @@
 							}
 						})
 						.append($("<span>").attr({
-								"class": 'badge'
+								"class": 'glyphicon glyphicon-remove-circle'
 							})
-							.text("x")
 							.on("click", function(){
 								$(this).parent().remove();
 								$("#createCard").focus();
-								chat.sendSysMsg({msg:"CardsNum", CardsNum: TreeMap.checkCardsNum()});
+								chat.sendSysMsg({msg:"CardsNum", cardsNum: TreeMap.checkCardsNum()});
 							})
 						);
 			$(".workplace-list").prepend($item);
 			$createIdea.val("");
-			chat.sendSysMsg({msg:"CardsNum", CardsNum: TreeMap.checkCardsNum()});
+			chat.sendSysMsg({msg:"CardsNum", cardsNum: TreeMap.checkCardsNum()});
 		}
 	});
 
@@ -77,6 +77,82 @@
 			}, 500);
 		}
 	});
+
+	function updateUserPresence(data){
+		if(
+			data.type=="welcome" || 
+			data.type=="init" || 
+			data.type=="system" ||
+			data.type=="CardsNum"
+		) {
+			addUserList(data);
+		}
+		if(data.type=="disconnected") deleteUserList(data);
+	}
+
+	function addUserList(data){
+		var index;
+		for(var i = 0, index = -1; i < userList.length; i++){
+			if(userList[i].socketId == data.socketId){
+				userList[i].cardsNum = data.cardsNum;
+				index = i;
+				$("#userview-"+data.socketId).text(data.user + "(" + data.cardsNum + ")");
+			}
+		}
+		if(index == -1){
+			userList.push({
+				user: data.user,
+				cardsNum: data.cardsNum,
+				socketId: data.socketId
+			});
+
+			var $item = $("<span>")
+							.attr({
+								class: 'glyphicon glyphicon-user userlist',
+								id: 'userview-'+data.socketId
+							})
+							.text(data.user + "(" + data.cardsNum + ")");
+			$(".pager").append($item);
+		}
+	}
+
+	function deleteUserList(data){
+		$("#userview-"+data.socketId).remove();
+	}
+
+	socket.on("connected" ,function(){
+		var data = {
+			cardsNum: TreeMap.checkCardsNum()
+		};
+		chat.sendInit(data);
+	});
+
+	socket.on("init", function(data){
+		var _data = {
+			type: "welcome",
+			to: data.socketId,
+			cardsNum: TreeMap.checkCardsNum()
+		};
+		chat.send(_data);
+		updateUserPresence(data);
+	});
+
+	socket.on("welcome", function(data){
+		updateUserPresence(data);
+	});
+
+	socket.on("comment", function(data){
+		console.log(data);
+	});
+
+	socket.on("system", function(data){
+		console.log(data);
+		updateUserPresence(data);
+	});
+
+	socket.on("disconnected", function(data){
+		updateUserPresence(data);
+	})
 
 })();
 
