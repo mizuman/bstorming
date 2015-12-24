@@ -41,7 +41,7 @@
 								chat.sendSysMsg({msg:"CardsNum", cardsNum: TreeMap.checkCardsNum()});
 							})
 						);
-			$(".workplace-list").prepend($item);
+			$(".workplace-list").append($item);
 			$createIdea.val("");
 			chat.sendSysMsg({msg:"CardsNum", cardsNum: TreeMap.checkCardsNum()});
 		}
@@ -49,7 +49,6 @@
 
 	$(".map-create").on("click", function(){
 		var url = "/data/empty.json";
-
 		var data = {
 			msg: "loadMap",
 			type: "system",
@@ -165,12 +164,16 @@
 			TreeMap.deleteNode(targetNode);
 		} else if(data.msg == "loadMap"){
 			TreeMap.loadMap(data.url);
+		} else if(data.msg == "addNode"){
+			data.addNode = JSON.parse(data.addNode);
+			console.log("addNode mesg received", data);
+			TreeMap.addNode(data);
 		}
 	});
 
 	socket.on("disconnected", function(data){
 		updateUserPresence(data);
-	})
+	});
 
 })();
 

@@ -230,23 +230,23 @@ $(document).ready(function(){
 	init();
 	
 	$("#signup").on("click", function(event){
-		event.preventDefault()
+		event.preventDefault();
 		userSignup();
-	})
+	});
 
 	$("#login").on("click", function(event){
-		event.preventDefault()
+		event.preventDefault();
 		userLogin();
-	})
+	});
 
 	$("#logout").on("click", function(event){
-		event.preventDefault()
+		event.preventDefault();
 		userLogout();
-	})
+	});
 
 	$("#submit").on("click", function(event){
-		event.preventDefault()
+		event.preventDefault();
 		upload_file();
-	})
+	});
 
 })

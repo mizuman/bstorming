@@ -394,17 +394,26 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 			.on("click", function(d){
 				var selectedCard = $(selectedCardClass).text();
 				if(selectedCard){
-					if(!d.children){
-						toggleChildren(d);
-					}
-					if(typeof d.children !== 'undefined') {
-						d.children[d.children.length] = {"name": selectedCard};
-					}
-					else {
-						d.children = [{"name": selectedCard}];
-					}
+					var _addNode = {name: selectedCard};
+					var targetNode = d;
+					TreeMap.addChildren(targetNode, _addNode);
 					$(selectedCardClass).remove();
-					update(d);
+
+					var path = [];
+					path = TreeMap.checkNodePath(path,d);
+					var memberfilter = ["name", "children", "_children"];
+
+					var data = {
+						msg:"addNode",
+						type: "system",
+						path: path,
+						addNode: JSON.stringify(_addNode, memberfilter, "\t")
+					};
+					// data.addNode = [addNode];
+					console.log(data);
+					console.log("addnode", _addNode);
+					// chat.send2data(data, _addNode);
+					chat.send(data);
 				}
 			});
 
@@ -555,6 +564,30 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 	update(TreeMap.root);
 	centerNode(TreeMap.root);
 
+	TreeMap.addNode = function (data){
+		console.log("addNode", data);
+
+		var targetNode = TreeMap.pickUpNodeByPath(data.path, TreeMap.root);
+		// var addNode = {name: data.addNode};
+		var addNode = data.addNode;
+		// console.log(targetNode, subdata);
+		TreeMap.addChildren(targetNode, addNode);
+	};
+
+	TreeMap.addChildren = function (targetNode, addNode){
+		if(!targetNode.children){
+			toggleChildren(targetNode);
+		}
+		if(typeof targetNode.children !== 'undefined') {
+			targetNode.children[targetNode.children.length] = addNode;
+		}
+		else {
+			targetNode.children = [addNode];
+		}
+		update(targetNode);
+		console.log("addChildren > addNode",addNode);
+	};
+
 	TreeMap.loadMap = function (json_url){
 		d3.json(json_url, function(e,_treeData) {
 			totalNodes = 0;
@@ -583,6 +616,7 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 	};
 
 	TreeMap.pickUpNodeByPath = function(path, d){
+		if(path.length == 0) return d;
 		console.log(path);
 		var index = path.splice(0,1);
 		if(path.length > 0){

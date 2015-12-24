@@ -34,7 +34,7 @@ io.on("connection", function(socket){
 	socket.on("welcome", function(data){
 		console.log(data);
 		socket.to(data.to).emit("welcome", data);
-	})
+	});
 
 	socket.on("system", function(data){
 		console.log(data);
