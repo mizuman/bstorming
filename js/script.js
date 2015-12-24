@@ -168,6 +168,9 @@
 			data.addNode = JSON.parse(data.addNode);
 			console.log("addNode mesg received", data);
 			TreeMap.addNode(data);
+		} else if(data.msg == "moveNode"){
+			console.log(data);
+			TreeMap.moveNode(data);
 		}
 	});
 

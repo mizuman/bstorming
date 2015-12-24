@@ -216,6 +216,27 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 			}
 			domNode = this;
 			if (selectedNode) {
+				// socket.emit node moving info
+				var addNode = d;
+				var targetNode = selectedNode;
+
+				var targetPath = [];
+				var addNodePath = [];
+
+				targetPath = TreeMap.checkNodePath(targetPath,selectedNode);
+				addNodePath = TreeMap.checkNodePath(addNodePath,d);
+				// var memberfilter = ["name", "children", "_children"];
+
+				var data = {
+					msg:"moveNode",
+					type: "system",
+					targetPath: targetPath,
+					addNodePath: addNodePath
+					// addNode: JSON.stringify(addNode, memberfilter, "\t"),
+					// targetNode: JSON.stringify(targetNode, memberfilter, "\t")
+				};
+				chat.send(data);
+
 				// now remove the element from the parent, and insert it into the new elements children
 				var index = draggingNode.parent.children.indexOf(draggingNode);
 				if (index > -1) {
@@ -233,8 +254,10 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 				}
 				// Make sure that the node being added to is expanded so user can see added node is correctly moved
 				expand(selectedNode);
+
 				sortTree();
 				endDrag();
+
 			} else {
 				endDrag();
 			}
@@ -394,9 +417,9 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 			.on("click", function(d){
 				var selectedCard = $(selectedCardClass).text();
 				if(selectedCard){
-					var _addNode = {name: selectedCard};
+					var addNode = {name: selectedCard};
 					var targetNode = d;
-					TreeMap.addChildren(targetNode, _addNode);
+					TreeMap.addChildren(targetNode, addNode);
 					$(selectedCardClass).remove();
 
 					var path = [];
@@ -407,12 +430,8 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 						msg:"addNode",
 						type: "system",
 						path: path,
-						addNode: JSON.stringify(_addNode, memberfilter, "\t")
+						addNode: JSON.stringify(addNode, memberfilter, "\t")
 					};
-					// data.addNode = [addNode];
-					console.log(data);
-					console.log("addnode", _addNode);
-					// chat.send2data(data, _addNode);
 					chat.send(data);
 				}
 			});
@@ -568,10 +587,38 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 		console.log("addNode", data);
 
 		var targetNode = TreeMap.pickUpNodeByPath(data.path, TreeMap.root);
-		// var addNode = {name: data.addNode};
 		var addNode = data.addNode;
-		// console.log(targetNode, subdata);
 		TreeMap.addChildren(targetNode, addNode);
+	};
+
+	TreeMap.moveNode = function(data){
+		console.log("TreeMap.root", TreeMap.root);
+		console.log("path", data.targetPath, data.addNodePath);
+		var targetNode = TreeMap.pickUpNodeByPath(data.targetPath, TreeMap.root);
+		console.log("targetNode", targetNode);
+		var addNode = TreeMap.pickUpNodeByPath(data.addNodePath, TreeMap.root);
+		console.log("addNode", addNode);
+		console.log("moveNode", targetNode, addNode);
+
+		var index = addNode.parent.children.indexOf(addNode);
+		// remove
+		if(index > -1){
+			addNode.parent.children.splice(index, 1);
+		}
+		// move
+		if (typeof targetNode.children !== 'undefined' || typeof targetNode._children !== 'undefined') {
+			if (typeof targetNode.children !== 'undefined') {
+				targetNode.children.push(addNode);
+			} else {
+				targetNode._children.push(addNode);
+			}
+		} else {
+			targetNode.children = [];
+			targetNode.children.push(addNode);
+		}
+		expand(targetNode);
+		sortTree();
+		update(TreeMap.root);
 	};
 
 	TreeMap.addChildren = function (targetNode, addNode){
@@ -616,13 +663,16 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 	};
 
 	TreeMap.pickUpNodeByPath = function(path, d){
+		console.log("----pickup path&d:", path, d);
 		if(path.length == 0) return d;
-		console.log(path);
 		var index = path.splice(0,1);
+		console.log("pickup: ",index, path);
 		if(path.length > 0){
-			TreeMap.pickUpNodeByPath(path,d.children[index]);
+			console.log("next children :", d.children[index[0]]);
+			return TreeMap.pickUpNodeByPath(path,d.children[index[0]]);
 		} else {
-			return d.children[index];
+			console.log("return : ", d.children[index[0]]);
+			return d.children[index[0]];
 		}
 	};
 
