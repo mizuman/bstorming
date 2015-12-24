@@ -93,7 +93,9 @@
 		) {
 			addUserList(data);
 		}
-		if(data.type=="disconnected") deleteUserList(data);
+		if(data.type=="disconnected") {
+			deleteUserList(data);
+		}
 	}
 
 	function addUserList(data){
@@ -144,8 +146,36 @@
 	});
 
 	socket.on("welcome", function(data){
+		console.log(data);
+		if(userList.length==0){
+			var _data = {
+				type: "mapRequest",
+				to: data.socketId,
+				cardsNum: TreeMap.checkCardsNum()
+			};
+			chat.send(_data);
+		}
 		updateUserPresence(data);
 	});
+
+	socket.on("mapRequest", function(data){
+		console.log(data);
+		var memberfilter = ["name", "children", "_children", "x", "x0", "y", "y0"];
+		var _data = {
+			type: "mapResponse",
+			to: data.socketId,
+			map: JSON.stringify(TreeMap.root, memberfilter, "\t"),
+			cardsNum: TreeMap.checkCardsNum()
+		};
+		console.log("_data",_data);
+		chat.send(_data);
+	})
+
+	socket.on("mapResponse", function(data){
+		console.log(data);
+		// TreeMap.root = data.map;
+		TreeMap.update(JSON.parse(data.map));
+	})
 
 	socket.on("comment", function(data){
 		console.log(data);

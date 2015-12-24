@@ -681,6 +681,16 @@ treeJSON = d3.json("/data/welcome.json", function(error, treeData) {
 		update(d);
 	}
 
+	TreeMap.update = function(d){
+		console.log(d);
+		TreeMap.root = d;
+		// TreeMap.root.name = d.name;
+		// TreeMap.root.children = d.children;
+		// TreeMap.root._children = d._children;
+		update(TreeMap.root);
+		centerNode(TreeMap.root);
+	}
+
 	TreeMap.editName = function(d, msg) {
 		mySlidebars.slidebars.open("right");
 		$(".nodeInfo").html("");

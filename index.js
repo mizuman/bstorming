@@ -36,6 +36,16 @@ io.on("connection", function(socket){
 		socket.to(data.to).emit("welcome", data);
 	});
 
+	socket.on("mapRequest", function(data){
+		console.log(data);
+		socket.to(data.to).emit("mapRequest", data);
+	});
+
+	socket.on("mapResponse", function(data){
+		console.log(data);
+		socket.to(data.to).emit("mapResponse", data);
+	});
+
 	socket.on("system", function(data){
 		console.log(data);
 		socket.to(data.room).emit("system", data);
