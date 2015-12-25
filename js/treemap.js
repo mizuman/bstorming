@@ -624,6 +624,15 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
 		else {
 			targetNode.children = [addNode];
 		}
+
+		visit(TreeMap.root, function(d) {
+			totalNodes++;
+			maxLabelLength = Math.max(d.name.length, maxLabelLength);
+
+		}, function(d) {
+			return d.children && d.children.length > 0 ? d.children : null;
+		});
+
 		update(targetNode);
 	};
 
@@ -669,8 +678,16 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
 		update(d);
 	}
 
-	TreeMap.update = function(d){
-		TreeMap.root = d;
+	TreeMap.update = function(_treeData){
+		visit(_treeData, function(d) {
+			totalNodes++;
+			maxLabelLength = Math.max(d.name.length, maxLabelLength);
+
+		}, function(d) {
+			return d.children && d.children.length > 0 ? d.children : null;
+		});
+
+		TreeMap.root = _treeData;
 		// TreeMap.root.name = d.name;
 		// TreeMap.root.children = d.children;
 		// TreeMap.root._children = d._children;
@@ -752,6 +769,16 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
 			if (index > -1) {
 				d.parent.children.splice(index, 1);
 			}
+
+			maxLabelLength=0;
+			visit(TreeMap.root, function(d) {
+				totalNodes++;
+				maxLabelLength = Math.max(d.name.length, maxLabelLength);
+
+			}, function(d) {
+				return d.children && d.children.length > 0 ? d.children : null;
+			});
+
 			update(d);
 		}
 	}
