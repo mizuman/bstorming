@@ -43,4 +43,12 @@ function chat(room, user){
 		chat.send(data);
 	};
 
+	chat.getKeys = function(){
+		var data = {
+			type: "getKeys"
+		}
+		chat.send(data);
+
+	}
+
 }

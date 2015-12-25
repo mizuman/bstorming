@@ -1,8 +1,6 @@
 function User(){}
 
 $(document).ready(function(){
-	var APP_ID = "8DIsPS88JKgLxPJhh9zyt9TC5C03bMDs5il6r8fi";
-	var JS_KEY = "RfsESAxLLE2ePcTfgydba0M8OrCyOqJpAGaYx9Ih";
 
 	function showVerigy() {
 		$(".btn-verify").show();
@@ -158,13 +156,14 @@ $(document).ready(function(){
 							.val(url)
 							.on("click", function(event){
 								var url = $(this).val()
-								TreeMap.loadMap(url);
+								// TreeMap.loadMap(url);
 								var data = {
-									msg: "loadMap",
+									msg: "getMapFile",
 									type: "system",
 									url: url
 								};
 								chat.sendSysMsg(data);
+								console.log(data);
 							})
 							.append(
 								$("<span>")
@@ -192,7 +191,7 @@ $(document).ready(function(){
 		}
 	}
 
-	function joinRoom(){
+	User.joinRoom = function(){
 		var room, user, id;
 
 		// set room
@@ -205,6 +204,8 @@ $(document).ready(function(){
 		// set user name
 		if(Parse.User.current()){
 			user = Parse.User.current().get("username");
+			showService();
+			User.getPost();
 		} else {
 			user = "guest";
 		}
@@ -216,15 +217,16 @@ $(document).ready(function(){
 	}
 
 	function init() {
-		Parse.initialize(APP_ID, JS_KEY);
-		joinRoom();
+		// joinRoom();
+		// getKeys();
+		// Parse.initialize(APP_ID, JS_KEY);
 
-		if(Parse.User.current()){
-			showService();
-			User.getPost();
-		} else {
+		// if(Parse.User.current()){
+			// showService();
+			// User.getPost();
+		// } else {
 			showVerigy();
-		}
+		// }
 	}
 
 	init();

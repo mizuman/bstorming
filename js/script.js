@@ -128,11 +128,22 @@
 		$("#userview-"+data.socketId).remove();
 	}
 
-	socket.on("connected" ,function(){
+	function getMapFile(url){
 		var data = {
+			type: "getMapData",
+			url: url
+		};
+		chat.send(data);
+	}
+
+	socket.on("connected" ,function(data){
+		Parse.initialize(data.APP_ID, data.JS_KEY);
+		User.joinRoom();
+
+		var _data = {
 			cardsNum: TreeMap.checkCardsNum()
 		};
-		chat.sendInit(data);
+		chat.sendInit(_data);
 	});
 
 	socket.on("init", function(data){
@@ -169,13 +180,13 @@
 		};
 		console.log("_data",_data);
 		chat.send(_data);
-	})
+	});
 
 	socket.on("mapResponse", function(data){
 		console.log(data);
 		// TreeMap.root = data.map;
 		TreeMap.update(JSON.parse(data.map));
-	})
+	});
 
 	socket.on("comment", function(data){
 		console.log(data);

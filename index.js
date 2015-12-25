@@ -6,6 +6,13 @@ var http = require("http");
 var server = http.createServer(app);
 
 var io = require("socket.io")(server);
+var Parse = require('parse/node').Parse;
+
+var APP_ID = "8DIsPS88JKgLxPJhh9zyt9TC5C03bMDs5il6r8fi";
+var JS_KEY = "RfsESAxLLE2ePcTfgydba0M8OrCyOqJpAGaYx9Ih";
+
+
+Parse.initialize(APP_ID, JS_KEY);
 
 app.use(express.static(__dirname + "/"));
 
@@ -18,7 +25,26 @@ io.on("connection", function(socket){
 	var room;
 
 	console.log("connected");
-	socket.emit("connected", {name:"system", msg:"connected"});
+	socket.emit("connected", {name:"system", msg:"connected", APP_ID:APP_ID, JS_KEY:JS_KEY});
+
+	function getMapFilebyParse(url){
+		console.log(url);
+		http.get(url, function(res){
+			var body = '';
+			res.setEncoding('utf8');
+
+			res.on('data', function(chunk){
+				body += chunk;
+			});
+
+			res.on('end', function(res){
+				ret = JSON.parse(body);
+				console.log(ret);
+			});
+		}).on('error', function(e){
+			console.log(e.message); //エラー時
+		});
+	}
 
 	socket.on("msg", function(data){
 		console.log(data);
@@ -45,6 +71,18 @@ io.on("connection", function(socket){
 		console.log(data);
 		socket.to(data.to).emit("mapResponse", data);
 	});
+
+	socket.on("getMapFile", function(data){
+		console.log(data);
+		getMapFilebyParse(data.url);
+	});
+
+	// socket.on("getKeys", function(data{
+	// 	console.log(data);
+	// 	data.APP_ID = APP_ID;
+	// 	data.JS_KEY = JS_KEY;
+	// 	socket.to(data.socketId).emit("yourkeys", data);
+	// }))
 
 	socket.on("system", function(data){
 		console.log(data);
