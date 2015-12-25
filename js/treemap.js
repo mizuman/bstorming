@@ -754,6 +754,7 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
 
 									$(".nodeNameInput").blur();
 									mySlidebars.slidebars.close();
+									$(".nodeInfo").html("");
 								}
 							});
 	}

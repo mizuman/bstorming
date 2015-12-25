@@ -160,12 +160,14 @@ $(document).ready(function(){
 									url:url
 								}
 								chat.getMapData(data);
-							})
-							.append(
+							});
+				if(reflesh == "append"){
+					$item.append(
 								$("<span>")
 								.attr('class', 'badge')
 								.text(entryUser)
 							);
+				}
 
 				$("#map-list").append($item);
 			}
