@@ -584,21 +584,14 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
 	centerNode(TreeMap.root);
 
 	TreeMap.addNode = function (data){
-		console.log("addNode", data);
-
 		var targetNode = TreeMap.pickUpNodeByPath(data.path, TreeMap.root);
 		var addNode = data.addNode;
 		TreeMap.addChildren(targetNode, addNode);
 	};
 
 	TreeMap.moveNode = function(data){
-		console.log("TreeMap.root", TreeMap.root);
-		console.log("path", data.targetPath, data.addNodePath);
 		var targetNode = TreeMap.pickUpNodeByPath(data.targetPath, TreeMap.root);
-		console.log("targetNode", targetNode);
 		var addNode = TreeMap.pickUpNodeByPath(data.addNodePath, TreeMap.root);
-		console.log("addNode", addNode);
-		console.log("moveNode", targetNode, addNode);
 
 		var index = addNode.parent.children.indexOf(addNode);
 		// remove
@@ -632,7 +625,6 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
 			targetNode.children = [addNode];
 		}
 		update(targetNode);
-		console.log("addChildren > addNode",addNode);
 	};
 
 	TreeMap.loadMap = function (json_url){
@@ -663,15 +655,11 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
 	};
 
 	TreeMap.pickUpNodeByPath = function(path, d){
-		console.log("----pickup path&d:", path, d);
 		if(path.length == 0) return d;
 		var index = path.splice(0,1);
-		console.log("pickup: ",index, path);
 		if(path.length > 0){
-			console.log("next children :", d.children[index[0]]);
 			return TreeMap.pickUpNodeByPath(path,d.children[index[0]]);
 		} else {
-			console.log("return : ", d.children[index[0]]);
 			return d.children[index[0]];
 		}
 	};
@@ -682,7 +670,6 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
 	}
 
 	TreeMap.update = function(d){
-		console.log(d);
 		TreeMap.root = d;
 		// TreeMap.root.name = d.name;
 		// TreeMap.root.children = d.children;
@@ -710,7 +697,6 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
 			})
 			.text("Delete")
 			.on("click", function(){
-				console.log("node-delete");
 				var path = [];
 				path = TreeMap.checkNodePath(path,d);
 
@@ -736,7 +722,6 @@ treeJSON = d3.json("/data/empty.json", function(error, treeData) {
 								if(e.which==13){
 									var path = [];
 									path = TreeMap.checkNodePath(path,d);
-									console.log("path: ", path);
 
 									var _name = $(".nodeNameInput").val()
 

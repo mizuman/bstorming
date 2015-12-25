@@ -67,7 +67,6 @@
 
 	});
 	$(".map-save").on("click", function(){
-		console.log("map-save");
 		var output = TreeMap.root;
 		User.post(output);
 	});
@@ -92,9 +91,10 @@
 			data.type=="system"
 		) {
 			addUserList(data);
-		}
-		if(data.type=="disconnected") {
+		} else if(data.type=="disconnected") {
 			deleteUserList(data);
+		} else if(data.type=="connected") {
+			refleshUserList();
 		}
 	}
 
@@ -126,6 +126,16 @@
 
 	function deleteUserList(data){
 		$("#userview-"+data.socketId).remove();
+		for(var i = 0; i < userList.length; i++){
+			if(userList[i].socketId==data.socketId){
+				userList.splice(i,1);
+			}
+		}
+	}
+
+	function refleshUserList(){
+		$(".userlist").remove();
+		userList = [];
 	}
 
 	function getMapFile(url){
@@ -138,6 +148,7 @@
 
 	socket.on("connected" ,function(data){
 		Parse.initialize(data.APP_ID, data.JS_KEY);
+		updateUserPresence(data);
 		User.joinRoom();
 
 		var _data = {
@@ -157,7 +168,6 @@
 	});
 
 	socket.on("welcome", function(data){
-		console.log(data);
 		if(userList.length==0){
 			var _data = {
 				type: "mapRequest",
@@ -170,7 +180,6 @@
 	});
 
 	socket.on("mapRequest", function(data){
-		console.log(data);
 		var memberfilter = ["name", "children", "_children", "x", "x0", "y", "y0"];
 		var _data = {
 			type: "mapResponse",
@@ -178,18 +187,15 @@
 			map: JSON.stringify(TreeMap.root, memberfilter, "\t"),
 			cardsNum: TreeMap.checkCardsNum()
 		};
-		console.log("_data",_data);
 		chat.send(_data);
 	});
 
 	socket.on("mapResponse", function(data){
-		console.log(data);
 		// TreeMap.root = data.map;
 		TreeMap.update(JSON.parse(data.map));
 	});
 
 	socket.on("getMapFile", function(data){
-		console.log(data);
 		TreeMap.update(data.map);
 	});
 
@@ -198,7 +204,6 @@
 	});
 
 	socket.on("system", function(data){
-		console.log(data);
 		if(data.msg == "CardsNum"){
 			updateUserPresence(data);
 		}
@@ -212,10 +217,8 @@
 			TreeMap.loadMap(data.url);
 		} else if(data.msg == "addNode"){
 			data.addNode = JSON.parse(data.addNode);
-			console.log("addNode mesg received", data);
 			TreeMap.addNode(data);
 		} else if(data.msg == "moveNode"){
-			console.log(data);
 			TreeMap.moveNode(data);
 		}
 	});

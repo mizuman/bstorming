@@ -15,4 +15,6 @@ logs
 node_modules
 npm-debug.log
 
+dev.md
+
 .DS_Store

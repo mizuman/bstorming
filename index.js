@@ -8,8 +8,8 @@ var server = http.createServer(app);
 var io = require("socket.io")(server);
 var Parse = require('parse/node').Parse;
 
-var APP_ID = "8DIsPS88JKgLxPJhh9zyt9TC5C03bMDs5il6r8fi";
-var JS_KEY = "RfsESAxLLE2ePcTfgydba0M8OrCyOqJpAGaYx9Ih";
+var APP_ID = process.env.NODE_PARSE_APP_ID;
+var JS_KEY = process.env.NODE_PARSE_JS_KEY;
 
 
 Parse.initialize(APP_ID, JS_KEY);
@@ -25,7 +25,7 @@ io.on("connection", function(socket){
 	var room;
 
 	console.log("connected");
-	socket.emit("connected", {name:"system", msg:"connected", APP_ID:APP_ID, JS_KEY:JS_KEY});
+	socket.emit("connected", {name:"system", type:"connected", APP_ID:APP_ID, JS_KEY:JS_KEY});
 
 	function getMapFilebyParse(data){
 		http.get(data.url, function(res){
@@ -51,9 +51,14 @@ io.on("connection", function(socket){
 		socket.to(data.room).emit("getMapFile", data);
 	}
 
-	socket.on("msg", function(data){
-		console.log(data);
-	});
+	function checkURLforParse(url){
+		var domain = url.match(/^[httpsfile]+:\/{2,3}([0-9a-z\.\-:]+?):?[0-9]*?\//i)[1];
+		if(domain=="files.parsetfss.com") {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	socket.on("init", function(data){
 		console.log(data);
@@ -68,29 +73,22 @@ io.on("connection", function(socket){
 	});
 
 	socket.on("mapRequest", function(data){
-		console.log(data);
 		socket.to(data.to).emit("mapRequest", data);
 	});
 
 	socket.on("mapResponse", function(data){
-		console.log(data);
 		socket.to(data.to).emit("mapResponse", data);
 	});
 
 	socket.on("getMapFile", function(data){
-		console.log(data);
-		getMapFilebyParse(data);
-		// console.log(data.map);
-		// socket.emit("getMapFile", data);
+		if(checkURLforParse(data.url)) getMapFilebyParse(data);
 	});
 
 	socket.on("system", function(data){
-		console.log(data);
 		socket.to(data.room).emit("system", data);
 	});
 
 	socket.on("comment", function(data){
-		console.log(data);
 		socket.to(data.room).emit("comment", data);
 	});
 
