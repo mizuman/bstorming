@@ -188,6 +188,11 @@
 		TreeMap.update(JSON.parse(data.map));
 	});
 
+	socket.on("getMapFile", function(data){
+		console.log(data);
+		TreeMap.update(data.map);
+	});
+
 	socket.on("comment", function(data){
 		console.log(data);
 	});

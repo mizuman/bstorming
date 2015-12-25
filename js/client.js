@@ -43,12 +43,8 @@ function chat(room, user){
 		chat.send(data);
 	};
 
-	chat.getKeys = function(){
-		var data = {
-			type: "getKeys"
-		}
+	chat.getMapData = function(data){
+		data.type = "getMapFile";
 		chat.send(data);
-
 	}
-
 }

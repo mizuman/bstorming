@@ -27,9 +27,8 @@ io.on("connection", function(socket){
 	console.log("connected");
 	socket.emit("connected", {name:"system", msg:"connected", APP_ID:APP_ID, JS_KEY:JS_KEY});
 
-	function getMapFilebyParse(url){
-		console.log(url);
-		http.get(url, function(res){
+	function getMapFilebyParse(data){
+		http.get(data.url, function(res){
 			var body = '';
 			res.setEncoding('utf8');
 
@@ -39,11 +38,17 @@ io.on("connection", function(socket){
 
 			res.on('end', function(res){
 				ret = JSON.parse(body);
-				console.log(ret);
+				data.map = ret;
+				sendMapFile(data);
 			});
 		}).on('error', function(e){
 			console.log(e.message); //エラー時
 		});
+	}
+
+	function sendMapFile(data){
+		socket.emit("getMapFile", data);
+		socket.to(data.room).emit("getMapFile", data);
 	}
 
 	socket.on("msg", function(data){
@@ -74,15 +79,10 @@ io.on("connection", function(socket){
 
 	socket.on("getMapFile", function(data){
 		console.log(data);
-		getMapFilebyParse(data.url);
+		getMapFilebyParse(data);
+		// console.log(data.map);
+		// socket.emit("getMapFile", data);
 	});
-
-	// socket.on("getKeys", function(data{
-	// 	console.log(data);
-	// 	data.APP_ID = APP_ID;
-	// 	data.JS_KEY = JS_KEY;
-	// 	socket.to(data.socketId).emit("yourkeys", data);
-	// }))
 
 	socket.on("system", function(data){
 		console.log(data);

@@ -130,7 +130,7 @@ $(document).ready(function(){
 				}
 			}
 		})
-	}
+	};
 
 	var showResults = function(results, reflesh){
 		if(reflesh=="reset") {
@@ -156,14 +156,19 @@ $(document).ready(function(){
 							.val(url)
 							.on("click", function(event){
 								var url = $(this).val()
+
 								// TreeMap.loadMap(url);
+								// var data = {
+								// 	msg: "loadMap",
+								// 	type: "system",
+								// 	url: url
+								// };
+								// chat.sendSysMsg(data);
+								// console.log(data);
 								var data = {
-									msg: "getMapFile",
-									type: "system",
-									url: url
-								};
-								chat.sendSysMsg(data);
-								console.log(data);
+									url:url
+								}
+								chat.getMapData(data);
 							})
 							.append(
 								$("<span>")
